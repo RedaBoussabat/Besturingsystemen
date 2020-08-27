@@ -1,0 +1,194 @@
+# Samenvatting Besturingssystemen 2
+
+## Les 1 : Windows server 2019 
+
+- Server - Client ==> Client OS & Server OS (Operation System)
+- Een server OS verleent services of diensten aan:
+  - gekoppelde apparaten
+  - Verbonden gebruikers
+  - andere programma's
+- Deze diensten moeten geïnstalleerd worden
+- Deze diensten worden in Windows ook wel rollen of services genoemd
+- Clients kunnen ook services gaan aanbieden zoals webserver, mailserver of fileserver
+  - Indien er de nodige software (services) op geïnstalleerd is
+  - De client wordt dan een server
+- Computers in een netwerk zijn
+  - Client
+  - Server
+  - Beide
+
+
+
+### Server versies 
+
+- Essentials = Max. 25 gebruikers
+- Standard = Max. 2 VMs
+- Datacenter = VM's onbeperkt
+- De functies die de server gaat uitvoeren bepalen welke versie
+  - Veel VM's  => Datacenter
+  - Enkel DNS => Standard
+
+### De Evidentie 
+
+- In een Windowsnetwerk moet de naam van ieder netwerkobject uniek zijn
+  - Elke pc, elke server, elke gebruiker moet een **unieke** naam krijgen 
+  - Naming convention afhankelijk van bedrijf
+- Als administrator ben je god op de server
+  - (Als domeinbeheerder god op volledig domein en over alle netwerkapparaten binnen dat domein)
+- Rename de administrator naar root
+  - maak nieuwe gebruiker Administrator aan, geef deze alleen gebruikersrechten en geen administratorrechten
+
+### Licenties
+
+- Een serverlicentie geeft recht om de server te installeren op één computer
+- Deze licentie geeft je geen recht om via een client aan te melden op de server
+- Daarom moet voor iedere gebruiker of elk apparaat, die toegang heeft tot de Windows server (Client Acces License) CAL's aangekochten geïnstalleerd worden
+  - user CAL
+  - Device CAL
+
+### Standalone Server
+
+- Server zit niet in een domein
+- Na installatie wordt de server voorzien van een willekeurige naam en opgenomen in de werkgroep Workgroup
+- De tijd van de server wordt automatisch gesynchroniseerd met een server op het internet
+  - instellen via Settings -> Time & Language -> Date & Time
+
+### Active Directory
+
+- Database die **alle** gegevens bevat van het domein met betrekking tot:
+  - Users, Computers & printers, Policies, ...
+- Maakt gebruik van een DNS (Domain Name Service)
+- Voor veiligheid, meerdere domein controllers (DC)
+- LDAP => Updates!
+- "Last writer wins" policy
+- Meerdere "master" rollen beschikbaar voor iedere DC
+- Iedere DC kan een rol "doorschuiven" naar een andere
+- Momenteel zijn er 5 FSMO (Flexible Single Master Operation) rollen
+
+### The Forest Root 
+
+
+
+<img src="D:\User Files\Downloads\2020-07-16 14_26_18-Les1.pdf - Adobe Acrobat Pro DC.png" alt="2020-07-16 14_26_18-Les1.pdf - Adobe Acrobat Pro DC" style="zoom:75%;" />
+
+- Een parent domain of root domain is het eerste domain
+- Cosci.be is het root domain
+- Cosci.be is ook het parent domain voor de child domains tokyo.cosci.be en madrid.cosci.be
+- De users van tokyo.cosci.be kunnen ook inloggen bij cosci.be, ook al zit deze account niet in de AD van cosci.be
+
+## Les 2 : Windows Server 2019 part 2
+
+### Standalone server 
+
+- ook al wordt het niet veel gebruikt... alles begint hier ... 
+- Alvorens een server in een domein opgenomen wordt of zelf een domein controller wordt, is het een standalone server
+- Op deze standalone server wordt gewerkt met lokale gebruikers en lokale groepen
+  - lokaal op de server 
+  - hoe aanmaken? => tools -> computer management
+
+### Active Directory 
+
+- AD is een implementatie van LDAP, Kerberos en DNS is een Windows-omgeving
+  - Kerberos: Authenticatieprotocol dat ervoor zorgt dat gebruikers van een netwerk zich op een veilige maniet kunnen aanmelden en hun identiteit kunnen bewijzen, zonder zich telkens opnieuw te moeten aanmelden. Dit maakt "single sign-on" mogelijk.
+  - LDAP: "Lightweight Access Protocol" is een netwerkprotocol dat beschrijft hoe gegevens uit een directoryservice benaderd moeten worden.  Een directory is informatie die op een hiërarchische manier, gegroepeerd naar een bepaald attribuut, is opgeslagen
+  - DNS
+
+### ntds.dit
+
+- Een domein is een groep netwerkobjecten zoals computers, printers, ... die centraal beheerd worden
+  - ieder netwerkobject moet een unieke naam krijgen 
+- Gegevens over deze netwerkobjecten worden bewaard in een databank-bestand, nl ntds.dit opgeslaan in %Systemroot%\ntds\
+  - New Technology Directory Services
+  - Data Information Table
+- Bevat 3 tabellen:
+  - Schema
+    - Hierin staat welke soort objecten in een active directory kunnen worden gemaakt/gebruikt
+    - Hierin staat welke objecten "een relatie hebben" tot welke ander objecten
+    - Hierin staat welke objectkenmerken verplicht of facultatief zijn
+  - Link 
+    - Hierin staat welke objecten "verbonden zijn" met welke andere objecten 
+  - Gegevens
+    - Bevat de gegevens van alle objecten 
+
+### Sites
+
+- Een domein is een logische eenheid van netwerkobjecten 
+- Een site is een fysiek geografische eenheid nl. een locatie
+- Het bedrijf Cosci.be kan een domein hebben waarbij de kantoren/gebouwen zich op verschillende geografisch verspreide locaties of sites bevinden
+- Een site wordt gedefinieerd door een of meerdere IP-subnetten
+- Zijn ontstaan om het replicatieverkeer over WAN-linken te verminderen
+
+### Objectklassen in AD
+
+- AD is een objectgeoriënteerde directoryservice
+- Objecten zijn instanties van klassen 
+- Welke ingebouwde objectklassen heeft AD
+  - Gebruikers
+  - Computers
+  - Groepen (Container objecten) => verschil? De scope
+    - Universal Group
+      - Bereik gehele forest
+      - Users/computes/... uit alle domeinen van het forest kunnen lid zin
+  - Global Group
+    - Bereik gehele forest
+    - Users/computes/... uitsluitend uit eigen domeinen kunnen lid zin
+  - Domain Local Group
+    - Bereik domein
+    - Users/computers uit alle domeinen van het forest kunnen lid zijn
+  - Organizational unit
+
+### Groepsbeleid
+
+- Beleid beschrijft regels (beperkingen) die gelden:
+  - User policies
+    - Uitgevoerd tijdens inloggen user
+    - Beperkingen gelden niet meer na uitloggen
+  - Computer policies
+    - Uitgevoerd tijden opstart van computer
+    - Blijven gelden bij elke user die inlogt
+- We spreken meestal niet van beleid maar van groepsbeleid
+- Twee soorten groepsbeleid
+  - Lokaal => opgeslaan op lokale computer, geldend voor een computer
+    - Aanpasbaar als computer niet in een domein zit
+    - gpedit.msc
+  - Niet lokaal => centraal opgeslaan, geldend voor een AD netwerk
+    - Het groepsbeleid wordt vastgelegd in een Group Policy Object in AD
+    - Groepsbeleidobjecten zijn van toepassing op objecten in AD van de site, domein of OU waaraan ze zijn gekoppeld
+    - GPO's uitvoer volgorde
+      - Lokale 
+      - Site
+      - Domein
+      - OU (en sub-ou ...)
+
+### Group Policy Management
+
+- GPO's op sites worden standaard niet getoond => Show Sites
+- GPO is altijd gekoppeld aan een site, domein of OU
+- Voorbeeld
+  - Maak policy die alle icoontjes op de desktop verwijdert voor een user van Marketing
+  - Hoe het wachtwoord eruit moet zien
+
+
+
+## Les 3 : Powershell 
+
+![2020-07-28 12_54_50-Les4.2.pdf - Adobe Acrobat Pro DC](D:\User Files\Downloads\2020-07-28 12_54_50-Les4.2.pdf - Adobe Acrobat Pro DC.png)
+
+Het zorgt ervoor dat er een consistent computing omgegving creêrt, zodat het zowel op mijn machine en als die van een ander.
+
+- Container is een software packet die bestaat uit de applicatie en al zijn "dependencies" om de applicatie te runnen 
+- Images wortt gebruikt om een container te starten, deze zijn zo klein mogelijk
+- Configureen 1 image en kopieer deze tussen verschillende systemen
+
+![2020-07-28 13_05_35-Les4.2.pdf - Adobe Acrobat Pro DC](D:\User Files\Downloads\2020-07-28 13_05_35-Les4.2.pdf - Adobe Acrobat Pro DC.png)
+
+- Images kunnen gehaald (pulled) worden van de Registry
+- Images kunnen gemaakt worden via een DockerFile
+- Images zijn templates, gebruikt om containers te maken
+  - (Zie het als een class en object)
+
+
+
+## Les 5 : Samba 
+
+= Microsoft maakt voor het communiceren tussen computers en servers gebruik van SMB protocol. Samba is een opensource implementatie van dit protocol, maakt het mogelijk om bestanden (en printers) op je Linux server te delen met MS Windows computers.

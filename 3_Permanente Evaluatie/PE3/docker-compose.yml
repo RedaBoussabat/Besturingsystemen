@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  db:
+   image: mysql
+   environment:
+    MYSQL_ROOT_PASSWORD: pdbpass
+    MYSQL_DATABASE: pdb
+    MYSQL_USER: pdb
+    MYSQL_PASSWORD: pdbpass
+   
+  backend:
+   image: redaboussabat/backend
+   environment:
+    MYSQL_HOST: db
+   ports: 
+    - '8000:8080'
+   restart: always
+
+  frontend:
+   image: coscicorp/catalog_frontend
+   ports:
+    - '80:3000'

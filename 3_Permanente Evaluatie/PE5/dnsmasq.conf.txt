@@ -1,0 +1,21 @@
+# We gebruiken de interface op ons nieuw netwerk
+interface=ens38
+bind-interfaces
+domain=cosci.be
+# We geven de interface, en range mee voor onze DHCP-server, samen met info over
+de default gateway en DNS-servers
+dhcp-range=ens38,192.168.10.1,192.168.10.240,255.255.255.0,8h
+dhcp-option=option:router,192.168.10.1
+dhcp-option=option:dns-server,192.168.10.1
+dhcp-option=option:dns-server,8.8.8.8
+# We zetten TFTP aan
+enable-tftp
+# TFTP krijgt een home directory
+tftp-root=/netboot/tftp
+labo.md 12/2/2019
+3 / 6
+# We geven een DHCP-optie mee, waarin we beschrijven hoe de client de PXE-server
+kan contacteren.
+dhcp-boot=pxelinux.0,pxe,192.168.10.1
+pxe-prompt="Press F8 for PXE Network boot.", 2
+pxe-service=x86PC, "Install OS via PXE",pxelinux
